@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 import com.business.transfers.TUser;
 import com.presentation.commands.CommandEnum.Commands;
+import com.presentation.components.Footer;
+import com.presentation.components.Header;
 import com.presentation.commands.Pair;
 import com.presentation.controller.Controller;
-import com.presentation.headerAndFooter.Footer;
-import com.presentation.headerAndFooter.Header;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Binder;
 import com.vaadin.data.BinderValidationStatus;

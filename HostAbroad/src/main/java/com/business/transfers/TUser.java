@@ -1,8 +1,12 @@
 package com.business.transfers;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class TUser {
+public class TUser implements Serializable{
+	
+	private static final long serialVersionUID = -7882975690341207166L;
+	
 	private String nickname;
 	private String fullName;
 	private String password;

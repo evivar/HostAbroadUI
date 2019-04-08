@@ -12,9 +12,10 @@ import com.business.transfers.TUser;
 import com.presentation.card.Card;
 import com.presentation.commands.CommandEnum.Commands;
 import com.presentation.commands.Pair;
+import com.presentation.components.Footer;
+import com.presentation.components.Header;
 import com.presentation.controller.Controller;
-import com.presentation.headerAndFooter.Footer;
-import com.presentation.headerAndFooter.Header;
+import com.presentation.searchUI.SearchUI;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.EmailValidator;
@@ -54,63 +55,92 @@ public class MyProfileUI extends UI {
 	protected void init(VaadinRequest request) {
 
 		TUser myUser = new TUser("Prueba", "PruebaFull", "ivan@ucm.es", "1234", 5, "Im prueba", false, false);
-		VerticalLayout superLayout = new VerticalLayout();
-		superLayout.setSpacing(false);
-		superLayout.setMargin(false);
-
-		//Para probar que funciona añadir en la bbdd los likes con sus ID. Hay que poner en receivedUser el
-		//mismo nombre que ponemos en este transfer
-				
 		ArrayList<Integer> likes = new ArrayList<Integer>();
 		likes.add(1);
 		likes.add(2);
 		
 		TUser myUser1 = new TUser("Prueba", "PruebaFull", "ivan@ucm.es", "1234", 5, "Im prueba", false, false, likes);
+		VerticalLayout superLayout = new VerticalLayout();
+		superLayout.setSpacing(false);
+		superLayout.setMargin(false);
 		
-
-		HorizontalLayout mainLayout = new HorizontalLayout();
-		mainLayout.setSizeFull();
-		mainLayout.setId("mainLayout");
-		VerticalLayout mainVertical = new VerticalLayout();
-		mainVertical.setId("mainVertical");
+		GridLayout grid = new GridLayout(2, 1);
+		
+		GridLayout menu = new GridLayout(1, 6);
+		
+		HorizontalLayout pages = new HorizontalLayout();
+		pages.setSizeUndefined();
 		Panel panel = new Panel();
 		panel.setSizeFull();
-		panel.setContent(mainVertical);
-		panel.setId("panel");
-		mainLayout.addComponent(panel);
+		//pages.addComponentsAndExpand(panel);
+		
+		Button personalInfo = new Button("Personal information", VaadinIcons.USER);
+		personalInfo.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-pi");
+		personalInfo.setHeight(80, Unit.PIXELS);
+		personalInfo.addClickListener(event ->{
+			pages.removeAllComponents();
+			pages.addComponent(personalInfoForm(myUser1));
+		});
+		menu.addComponent(personalInfo);
+		
+		Button traveler = new Button("Traveler settings", VaadinIcons.PAPERPLANE);
+		traveler.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-t");
+		traveler.setWidth("100%");
+		traveler.setHeight(80, Unit.PIXELS);
+		traveler.addClickListener(event->{
+			pages.removeAllComponents();
+			pages.addComponent(myProperties(myUser1));
+		});
+		menu.addComponent(traveler);
+		
+		Button host = new Button("Host settings", VaadinIcons.HOME);
+		host.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-h");
+		host.setWidth("100%");
+		host.setHeight(80, Unit.PIXELS);
+		menu.addComponent(host);
+		
+		Button interests = new Button("Interests", VaadinIcons.CALC_BOOK);
+		interests.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-i");
+		interests.setWidth("100%");
+		interests.setHeight(80, Unit.PIXELS);
+		interests.addClickListener(event->{
+			pages.removeAllComponents();
+			pages.addComponent(myInterests(myUser1));
+		});
+		menu.addComponent(interests);
+		
+		Button comments = new Button("Comments", VaadinIcons.CHAT);
+		comments.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-c");
+		comments.setWidth("100%");
+		comments.setHeight(80, Unit.PIXELS);
+		menu.addComponent(comments);
+		
+		Button msgs = new Button("Messages", VaadinIcons.ENVELOPES);
+		msgs.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-m");
+		msgs.setWidth("100%");
+		msgs.setHeight(80, Unit.PIXELS);
+		menu.addComponent(msgs);
+		
+		Button like = new Button("My likes", VaadinIcons.CALC_BOOK);
+		like.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-ml");
+		like.setWidth("100%");
+		like.setHeight(80, Unit.PIXELS);
+		like.addClickListener(event->{
+			pages.removeAllComponents();
+			pages.addComponent(myLikes(myUser1));
+		});
+		menu.addComponent(like);
 
-		this.tabs = new TabSheet();
-		tabs.setStyleName("v-tabsheet v-widget centered-tabs v-tabsheet-centered-tabs equal-width-tabs v-tabsheet-equal-width-tabs padded-tabbar v-tabsheet-padded-tabbar v-has-width");
-		mainVertical.addComponent(tabs);
-		tabs.setId("tab");
-
-		HorizontalLayout personalInfoTab = new HorizontalLayout();
-		personalInfoForm(personalInfoTab, myUser1);
-		tabs.addTab(personalInfoTab, "Personal Information", VaadinIcons.USER);
-
-		HorizontalLayout propertiesTab = new HorizontalLayout();
-		propertiesTab = myProperties(myUser1);
-		tabs.addTab(propertiesTab, "My Properties", VaadinIcons.COGS);
-
-		HorizontalLayout interestsTab = new HorizontalLayout();
-		interestsTab = myInterests(myUser1);
-		tabs.addTab(interestsTab, "Interests", VaadinIcons.CALC_BOOK);
-
-		HorizontalLayout commentsTab = new HorizontalLayout();
-		tabs.addTab(commentsTab, "Comments", VaadinIcons.ENVELOPE);
-
-		HorizontalLayout messagesTab = new HorizontalLayout();
-		tabs.addTab(messagesTab, "Messages", VaadinIcons.CHAT);
-
-		HorizontalLayout myLikesTab = new HorizontalLayout();
-		myLikesTab = myLikes(myUser1);
-		myLikesTab.setId("myLikesTab");
-		tabs.addTab(myLikesTab, "My Likes", VaadinIcons.HEART);
+		grid.addComponent(menu);
+		grid.addComponent(pages, 1, 0);
+		grid.setComponentAlignment(pages, Alignment.MIDDLE_CENTER);
+		
+		grid.setComponentAlignment(menu, Alignment.MIDDLE_CENTER);
 
 		superLayout.addComponent(new Header());
-		superLayout.addComponentsAndExpand(panel);
+		superLayout.addComponentsAndExpand(grid);
 		superLayout.addComponent(new Footer());
-
+		personalInfo.click();
 		this.setContent(superLayout);
 	}
 
@@ -173,7 +203,7 @@ public class MyProfileUI extends UI {
 		return mainLayoutInterests;
 	}
 
-	public void personalInfoForm(HorizontalLayout layout, TUser user) {
+	public HorizontalLayout personalInfoForm( TUser user) {
 		Panel panel = new Panel();
 		panel.setWidth("100%");
 		Binder<TUser> binder = new Binder<>(TUser.class);
@@ -256,7 +286,7 @@ public class MyProfileUI extends UI {
 
 		mainLayout.addComponent(imageAndDescription);
 		mainLayout.addComponent(personalInfo);
-		layout.addComponent(mainLayout);
+		return mainLayout;
 	}
 
 	public HorizontalLayout myProperties(TUser user) {
@@ -349,6 +379,7 @@ public class MyProfileUI extends UI {
 		HorizontalLayout mainLayout = new HorizontalLayout();
 		mainLayout.setId("mainLayout");
 		mainLayout.setSizeFull();
+		mainLayout.setSpacing(true);
 
 		// main helper
 		VerticalLayout mainVertical = new VerticalLayout();
