@@ -96,11 +96,36 @@
 			<artifactId>mssql-jdbc</artifactId>
 			<version>7.2.1.jre8</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.webjars/font-awesome -->
+		<dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>font-awesome</artifactId>
+			<version>5.8.1</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/commons-net/commons-net -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>3.6</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>com.fo0.advancedtokenfield</groupId>
+			<artifactId>AdvancedTokenField</artifactId>
+			<version>0.5.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.vaadin.addons</groupId>
 			<artifactId>simplecalendar</artifactId>
 			<version>0.7.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>extended-token-field</artifactId>
+			<version>0.3.0</version>
 		</dependency>
 
 		<dependency>

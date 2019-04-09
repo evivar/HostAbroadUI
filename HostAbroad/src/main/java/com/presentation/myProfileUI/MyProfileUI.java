@@ -2,6 +2,7 @@ package com.presentation.myProfileUI;
 
 import java.util.ArrayList;
 
+
 import com.business.enums.CountriesEnum;
 import com.business.enums.DurationOfStayEnum;
 import com.business.enums.InterestsEnum;
@@ -9,13 +10,14 @@ import com.business.enums.KnowledgesEnum;
 import com.business.transfers.THost;
 import com.business.transfers.TTraveler;
 import com.business.transfers.TUser;
+import com.explicatis.ext_token_field.ExtTokenField;
+import com.fo0.advancedtokenfield.main.AdvancedTokenField;
 import com.presentation.card.Card;
 import com.presentation.commands.CommandEnum.Commands;
 import com.presentation.commands.Pair;
 import com.presentation.components.Footer;
 import com.presentation.components.Header;
 import com.presentation.controller.Controller;
-import com.presentation.searchUI.SearchUI;
 import com.vaadin.annotations.Theme;
 import com.vaadin.data.Binder;
 import com.vaadin.data.validator.EmailValidator;
@@ -23,6 +25,7 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ExternalResource;
+import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.Position;
@@ -30,7 +33,6 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBoxGroup;
 import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
@@ -45,6 +47,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 
 @Theme("mytheme")
+@SuppressWarnings("deprecation")
 public class MyProfileUI extends UI {
 
 	private TabSheet tabs;
@@ -64,15 +67,19 @@ public class MyProfileUI extends UI {
 		superLayout.setSpacing(false);
 		superLayout.setMargin(false);
 		
-		GridLayout grid = new GridLayout(2, 1);
+		GridLayout grid = new GridLayout(3, 1);
+		
+		Label gap = new Label();
+		gap.setWidth("3em");
+		grid.addComponent(gap, 1, 0);
 		
 		GridLayout menu = new GridLayout(1, 6);
 		
 		HorizontalLayout pages = new HorizontalLayout();
-		pages.setSizeUndefined();
+		pages.setSizeFull();
+		pages.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
 		Panel panel = new Panel();
 		panel.setSizeFull();
-		//pages.addComponentsAndExpand(panel);
 		
 		Button personalInfo = new Button("Personal information", VaadinIcons.USER);
 		personalInfo.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-pi");
@@ -80,6 +87,7 @@ public class MyProfileUI extends UI {
 		personalInfo.addClickListener(event ->{
 			pages.removeAllComponents();
 			pages.addComponent(personalInfoForm(myUser1));
+			pages.setWidth("100%");
 		});
 		menu.addComponent(personalInfo);
 		
@@ -121,7 +129,7 @@ public class MyProfileUI extends UI {
 		msgs.setHeight(80, Unit.PIXELS);
 		menu.addComponent(msgs);
 		
-		Button like = new Button("My likes", VaadinIcons.CALC_BOOK);
+		Button like = new Button("My likes", VaadinIcons.HEART);
 		like.setStyleName("v-button v-widget icon-align-top v-button-icon-align-top-ml");
 		like.setWidth("100%");
 		like.setHeight(80, Unit.PIXELS);
@@ -132,8 +140,8 @@ public class MyProfileUI extends UI {
 		menu.addComponent(like);
 
 		grid.addComponent(menu);
-		grid.addComponent(pages, 1, 0);
-		grid.setComponentAlignment(pages, Alignment.MIDDLE_CENTER);
+		grid.addComponent(pages, 2, 0);
+		grid.setComponentAlignment(pages, Alignment.TOP_CENTER);
 		
 		grid.setComponentAlignment(menu, Alignment.MIDDLE_CENTER);
 
@@ -152,6 +160,7 @@ public class MyProfileUI extends UI {
 		mainLayout.setId("mainLayout");
 		HorizontalLayout mainLayoutInterests = new HorizontalLayout();
 		mainLayoutInterests.setId("mainLayoutInterests");
+		mainLayoutInterests.setStyleName("v-scrollable");
 		mainLayoutInterests.setSizeFull();
 		mainLayoutInterests.setSpacing(true);
 
@@ -203,35 +212,54 @@ public class MyProfileUI extends UI {
 		return mainLayoutInterests;
 	}
 
-	public HorizontalLayout personalInfoForm( TUser user) {
-		Panel panel = new Panel();
-		panel.setWidth("100%");
+	
+	public GridLayout personalInfoForm( TUser user) {
+		
+		GridLayout mainGrid = new GridLayout(1, 2);
+		mainGrid.setSpacing(true);
+		mainGrid.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+		GridLayout sections = new GridLayout(2, 1);
+		sections.setSpacing(true);
+		sections.setMargin(true);
+		sections.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+		VerticalLayout image = new VerticalLayout();
+		image.setSpacing(true);
+		image.setMargin(true);
+		image.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+		GridLayout fields = new GridLayout(3, 5);
+		fields.setSpacing(true);
+		fields.setMargin(true);
+		fields.setDefaultComponentAlignment(Alignment.MIDDLE_CENTER);
+		
 		Binder<TUser> binder = new Binder<>(TUser.class);
-		HorizontalLayout mainLayout = new HorizontalLayout();
-		mainLayout.setSizeFull();
-		mainLayout.setSpacing(true);
-
-		VerticalLayout imageAndDescription = new VerticalLayout();
-		imageAndDescription.setWidth("300px");
-		imageAndDescription.setSpacing(true);
-
+		
 		Image profileImg = new Image();
 		profileImg.setSource(new ExternalResource("https://raw.githubusercontent.com/evivar/images/master/User_Circle.png"));
 		profileImg.setId("ProfileImage");
+		
+		Button changeImg = new Button("Change image");
+		changeImg.setIcon(FontAwesome.UPLOAD);
+		changeImg.addClickListener(event -> {
+			if (binder.isValid()) {
+				Notification notif = new Notification("Changes saved!");
+				notif.setDelayMsec(3000);
+				notif.setPosition(Position.MIDDLE_CENTER);
+				notif.show(Page.getCurrent());
+				// Hay que llamar al comando
+			} else {
+				Notification notif = new Notification("Please fill all of the fields correctly. Then click save.");
+				notif.setDelayMsec(5000);
+				notif.setPosition(Position.MIDDLE_CENTER);
+				notif.show(Page.getCurrent());
+			}
+		});
+		changeImg.setId("ProfileChangeImg");
 
-		TextArea description = new TextArea("Description");
-		description.setWordWrap(true);
-		description.setValue(user.getDescription());
-		description.setId("ProfileDescription");
+		image.addComponent(profileImg);
+		image.addComponent(changeImg);
+		sections.addComponent(image, 0, 0);
+		
 
-		imageAndDescription.addComponent(profileImg);
-
-		imageAndDescription.addComponent(description);
-		imageAndDescription.setComponentAlignment(description, Alignment.MIDDLE_CENTER);
-
-		FormLayout personalInfo = new FormLayout();
-		personalInfo.setSizeFull();
-		personalInfo.setSpacing(true);
 
 		TextField username = new TextField("Username");
 		username.setValue(user.getNickname());
@@ -265,6 +293,7 @@ public class MyProfileUI extends UI {
 		languageCB.setId("ProfileLanguages");
 
 		Button save = new Button("Save");
+		save.setIcon(FontAwesome.SAVE);
 		save.addClickListener(event -> {
 			if (binder.isValid()) {
 				Notification notif = new Notification("Changes saved!");
@@ -281,12 +310,24 @@ public class MyProfileUI extends UI {
 		});
 		save.setId("ProfileSave");
 
-		personalInfo.addComponents(fullName, username, email, genderCB, languageCB, save);
-		personalInfo.setComponentAlignment(save, Alignment.BOTTOM_RIGHT);
+		TextArea description = new TextArea("Description");
+		description.setWordWrap(true);
+		description.setValue(user.getDescription());
+		description.setStyleName("v-textarea v-widget v-textarea-prompt");
+		description.setId("ProfileDescription");
 
-		mainLayout.addComponent(imageAndDescription);
-		mainLayout.addComponent(personalInfo);
-		return mainLayout;
+		fields.addComponent(fullName, 0, 0);
+		fields.addComponent(username, 1, 0);
+		fields.addComponent(email, 0, 1);
+		fields.addComponent(genderCB, 1, 1);
+		fields.addComponent(languageCB, 0, 2);
+		fields.addComponent(description, 0, 3, 2, 4);
+		
+		sections.addComponent(fields, 1, 0);
+		
+		mainGrid.addComponent(sections);
+		mainGrid.addComponent(save);
+		return mainGrid;
 	}
 
 	public HorizontalLayout myProperties(TUser user) {
@@ -298,6 +339,7 @@ public class MyProfileUI extends UI {
 		mainLayout.setId("mainLayout");
 		HorizontalLayout mainLayoutInterests = new HorizontalLayout();
 		mainLayoutInterests.setId("mainLayoutProperties");
+		mainLayoutInterests.setStyleName("v-scrollable");
 		mainLayoutInterests.setSizeFull();
 		mainLayoutInterests.setSpacing(true);
 
@@ -373,13 +415,13 @@ public class MyProfileUI extends UI {
 		return mainLayoutInterests;
 	}
 
-	@SuppressWarnings("unchecked")
 	private HorizontalLayout myLikes(TUser myUser) {
 
 		HorizontalLayout mainLayout = new HorizontalLayout();
 		mainLayout.setId("mainLayout");
 		mainLayout.setSizeFull();
 		mainLayout.setSpacing(true);
+		
 
 		// main helper
 		VerticalLayout mainVertical = new VerticalLayout();

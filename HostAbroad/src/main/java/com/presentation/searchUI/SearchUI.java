@@ -71,7 +71,6 @@ public class SearchUI extends UI{
 		VerticalLayout searchOptionsLayout = new VerticalLayout();
 		searchOptionsLayout.setSizeFull();
 		searchOptionsLayout.addComponentsAndExpand(this.createSearchOptions());
-		searchOptionsLayout.setSizeUndefined();
 		searchOptionsLayout.setMargin(false);
 		
 		final Styles styles = Page.getCurrent().getStyles();
@@ -94,8 +93,11 @@ public class SearchUI extends UI{
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private Panel createSearchOptions() {
 		Panel optionsPanel = new Panel();
-		optionsPanel.setHeight("100%");
+		/*optionsPanel.setHeight("100%");
+		optionsPanel.setWidth("20%");*/
+		optionsPanel.setSizeFull();
 		optionsPanel.setWidth("20%");
+		optionsPanel.setStyleName("layout-with-border");
 	
 		//checkbox
 		CheckBox hostCheckbox = new CheckBox("Host");
